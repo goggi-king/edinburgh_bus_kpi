@@ -1,6 +1,7 @@
 import os
 import requests
 import json
+import csv
 from datetime import datetime, timezone
  
  
@@ -8,7 +9,7 @@ from datetime import datetime, timezone
 # API SETTINGS
 # ============================================================
  
-api_key = os.environ ["BUS_API_KEY"]
+api_key = os.environ["BUS_API_KEY"]
  
 headers = {
     "Ocp-Apim-Subscription-Key": api_key
@@ -16,14 +17,14 @@ headers = {
  
  
 # ============================================================
-# STOP WE ARE COLLECTING
+# STOP
 # ============================================================
  
 atco = "6200206875"
  
  
 # ============================================================
-# GET REAL-TIME BUS DATA
+# API REQUEST
 # ============================================================
  
 url = (
@@ -50,31 +51,39 @@ print("Status:", response.status_code)
  
  
 # ============================================================
-# SAVE RESPONSE
+# SAVE OBSERVATION
 # ============================================================
  
 if response.status_code == 200:
  
     data = response.json()
  
-    print("API request successful")
-    print("Stop:", data.get("name"))
-    print("Number of events:", len(data.get("events", [])))
+    observed_at = datetime.now(timezone.utc).isoformat()
  
-    timestamp = datetime.now(timezone.utc).isoformat()
- 
-    output = {
-        "observed_at": timestamp,
+    row = {
+        "observed_at": observed_at,
         "atco_code": atco,
-        "data": data
+        "stop_name": data.get("name"),
+        "number_of_events": len(data.get("events", [])),
+        "raw_data": json.dumps(data)
     }
  
-    with open("bus_data.json", "w") as file:
-        json.dump(output, file, indent=2)
+    with open("bus_observations.csv", "a", newline="") as file:
  
-    print("Data saved to bus_data.json")
+        writer = csv.DictWriter(
+            file,
+            fieldnames=row.keys()
+        )
+ 
+        if file.tell() == 0:
+            writer.writeheader()
+ 
+        writer.writerow(row)
+ 
+    print("Observation saved")
  
 else:
  
     print("API request failed")
     print(response.text)
+ 
