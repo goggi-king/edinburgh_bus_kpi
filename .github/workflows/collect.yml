@@ -2,6 +2,9 @@ name: Collect Edinburgh Bus Data
  
 on:
   workflow_dispatch:
+
+permissions:
+  contents: write
  
 jobs:
   collect:
