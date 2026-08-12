@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 # API SETTINGS
 # ============================================================
  
-api_key = "0d7efb41a48249cb844296ecc3f3c714"
+api_key = os.environ ["BUS_API_KEY"]
  
 headers = {
     "Ocp-Apim-Subscription-Key": api_key
