@@ -1,0 +1,27 @@
+name: Collect Edinburgh Bus Data
+ 
+on:
+  workflow_dispatch:
+ 
+jobs:
+  collect:
+ 
+    runs-on: ubuntu-latest
+ 
+    steps:
+ 
+      - name: Get repository
+        uses: actions/checkout@v6
+ 
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+ 
+      - name: Install Python packages
+        run: pip install requests
+ 
+      - name: Collect bus data
+        env:
+          BUS_API_KEY: ${{ secrets.BUS_API_KEY }}
+        run: python collect.py
