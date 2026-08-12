@@ -1,4 +1,4 @@
-name: Collect Edinburgh Bus Data
+name: Collect Edinburgh Bus Data - automated
  
 on:
   workflow_dispatch:
